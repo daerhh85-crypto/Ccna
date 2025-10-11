@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCNA 200-301 محاكي الاختبار الاحترافي</title>
+    <!-- تحميل Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- إعداد خط Tajawal لخط عربي احترافي وناعم -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap');
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #eef2ff; /* Indigo-50 - خلفية خفيفة */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .quiz-card {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            max-width: 600px;
+            width: 100%;
+        }
+        /* خط احترافي لنص السؤال - تم تصغير حجم الخط وتخفيف وزنه */
+        #question-text {
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 600; /* وزن أقل من السابق */
+            font-size: 1.875rem; /* text-3xl بدلاً من text-4xl */
+        }
+
+        /* تأثير 3D على أزرار الخيارات */
+        .option-btn {
+            text-align: right;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #e0f2fe; /* Sky-100 */
+            transform: translateY(-2px);
+            box-shadow: 0 8px 10px -3px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* حالات الإجابة */
+        .selected-correct {
+            background-color: #d1fae5 !important; /* Green-100 */
+            border-color: #10b981 !important; /* Green-500 */
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3) !important;
+        }
+        .selected-incorrect {
+            background-color: #fee2e2 !important; /* Red-100 */
+            border-color: #ef4444 !important; /* Red-500 */
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3) !important;
+        }
+        .disabled {
+            cursor: default;
+            pointer-events: none;
+            opacity: 0.9;
+            transform: none !important; /* إلغاء الترانزيشن عند التعطيل */
+        }
+        /* تصميم زر التحميل الدائري */
+        .spinner {
+            border-top-color: #3b82f6;
+            -webkit-animation: spinner 1s linear infinite;
+            animation: spinner 1s linear infinite;
+        }
+        @-webkit-keyframes spinner {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-2xl w-full mx-auto">
+        <!-- العنوان الرئيسي -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-extrabold text-gray-800 tracking-wide p-2 bg-indigo-100 rounded-xl shadow-md border-b-2 border-indigo-400">
+                CCNA 200-301 v.1.1 محاكي اختبار آمن
+            </h1>
+        </header>
+
+        <!-- منطقة العرض الرئيسية (الطبقة الواحدة) -->
+        <main id="quiz-container" class="quiz-card bg-white p-6 md:p-8 rounded-xl border border-gray-200">
+
+            <!-- مؤشر التحميل/الرسالة الأولية -->
+            <div id="loading-state" class="text-center py-20">
+                <div class="spinner border-4 border-gray-200 border-solid rounded-full h-12 w-12 mx-auto mb-4"></div>
+                <p class="text-lg text-indigo-600 font-semibold">جاري تحميل الأسئلة. سيظهر الاختبار فوراً.</p>
+                <p id="loading-subtitle" class="text-sm text-gray-500 mt-2">
+                    <span id="mode-message" class="font-bold text-yellow-600">جارٍ محاولة الاتصال بالخادم الوكيل الآمن...</span>
+                </p>
+            </div>
+
+            <!-- محتوى الاختبار (يظهر بعد التحميل) -->
+            <div id="quiz-content" class="hidden">
+                
+                <!-- منطقة بيانات المسار -->
+                <div class="mb-10 pb-4 border-b border-gray-100 text-center">
+                    <span id="domain-display" class="inline-block px-5 py-2 text-xl font-extrabold rounded-full text-white shadow-lg">
+                        [مسار السؤال]
+                    </span>
+                </div>
+
+                <!-- نص السؤال (تم إزالة رقم السؤال وتخفيف الخط) -->
+                <div class="mb-10 text-center">
+                    <p id="question-text" class="text-3xl font-semibold text-gray-800 leading-snug max-w-xl mx-auto">
+                        [نص السؤال يظهر هنا]
+                    </p>
+                </div>
+
+                <!-- خيارات الإجابة -->
+                <div id="options-container" class="space-y-4">
+                    <!-- خيارات الإجابة يتم إدراجها هنا بواسطة JavaScript -->
+                </div>
+
+                <!-- منطقة الشرح والإجابة الصحيحة/الخاطئة -->
+                <div id="feedback-area" class="mt-8 p-4 rounded-xl border-r-4 hidden">
+                    <div class="flex items-start">
+                        <!-- أيقونة الشرح -->
+                        <div id="feedback-icon" class="flex-shrink-0 ml-3 h-8 w-8 rounded-full flex items-center justify-center">
+                            <!-- الأيقونة تظهر هنا -->
+                        </div>
+                        <div class="flex-grow">
+                            <h3 id="feedback-title" class="font-extrabold text-lg mb-2"></h3>
+                            <p id="explanation-text" class="text-md text-gray-700 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- أزرار السابق/التالي -->
+                <div class="flex justify-between mt-8 pt-6 border-t border-gray-100">
+                    <button id="prev-btn" onclick="goToPreviousQuestion()" disabled
+                        class="flex items-center px-5 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 disabled:opacity-50 transition duration-150 shadow-md hover:shadow-lg">
+                        <!-- أيقونة سابقة (سهم يمين) -->
+                        <svg class="w-5 h-5 ml-2 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        السابق
+                    </button>
+                    <button id="next-btn" onclick="goToNextQuestion()" disabled
+                        class="flex items-center px-5 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition duration-150 shadow-md hover:shadow-lg">
+                        التالي
+                        <!-- أيقونة التالي (سهم يسار) -->
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- شاشة النتائج النهائية -->
+            <div id="results-screen" class="hidden text-center py-12">
+                <h2 class="text-4xl font-extrabold text-indigo-700 mb-6">✅ نتائج اختبار CCNA</h2>
+                <div class="mb-8 p-6 bg-green-50 rounded-xl inline-block border-2 border-green-300 shadow-lg">
+                    <p class="text-3xl font-extrabold text-gray-800">
+                        النتيجة النهائية: <span id="final-score" class="text-green-600"></span> / 10
+                    </p>
+                </div>
+                <p id="result-message" class="text-xl text-gray-700 mb-10 leading-relaxed"></p>
+                
+                <button onclick="restartQuiz(true)"
+                    class="px-8 py-3 bg-blue-600 text-white font-bold text-lg rounded-full shadow-xl hover:bg-blue-700 transition duration-150 transform hover:scale-105">
+                    بدء اختبار جديد (جلب أسئلة جديدة عبر الذكاء الاصطناعي)
+                </button>
+                <p class="text-xs text-gray-400 mt-4">قد يتأخر جلب الأسئلة الجديدة عبر الذكاء الاصطناعي قليلاً</p>
+            </div>
+
+        </main>
+    </div>
+
+    <script type="module">
+        // ==========================================================
+        // بيانات الأسئلة المحلية (لضمان التحميل الفوري والعمل خارج أي بيئة)
+        // ==========================================================
+        const initialQuestions = [
+            { "question_text": "ما هو دور بروتوكول DHCP Snooping في تعزيز أمان الشبكة على محول Cisco؟", "domain_ar": "أمن الشبكات (Security Fundamentals)", "options": ["منع هجمات انتحال (Spoofing) لـ MAC Address.", "التحقق من صحة استجابات (DHCPOffer) ومنع خوادم DHCP الاحتيالية.", "تأمين الوصول إلى واجهة سطر الأوامر (CLI) للمحول.", "منع هجمات (ARP Poisoning) من داخل الشبكة المحلية."], "correct_index": 1, "explanation_ar": "DHCP Snooping يمنع خوادم DHCP الاحتيالية عن طريق تحديد المنافذ الموثوقة وغير الموثوقة." },
+            { "question_text": "في طوبولوجيا شبكة (Spine-Leaf) الحديثة، ما هو الدور الأساسي لمحول (Spine)؟", "domain_ar": "أساسيات الشبكات (Networking Fundamentals)", "options": ["توفير منافذ وصول للأجهزة النهائية (Endpoints) والتحكم في VLANs.", "العمل كـ Layer 3 Gateway وتوفير خدمات الأمان (Firewalling).", "ربط جميع محولات (Leaf) معاً لضمان وجود مسار واحد إلى كل مكان.", "توفير المسار الافتراضي (Default Gateway) لحركة المرور الخارجية."], "correct_index": 2, "explanation_ar": "تعمل محولات Spine كـ 'backbone' لربط جميع محولات Leaf معًا لضمان وصول أي محول Leaf إلى آخر بخطوة واحدة." },
+            { "question_text": "ما هي ميزة بروتوكول (Rapid PVST+) مقارنة بـ (PVST+)؟", "domain_ar": "الوصول للشبكة (Network Access)", "options": ["دعم التوازن في تحميل الروابط (Load Balancing) بشكل افتراضي.", "أوقات تقارب (Convergence) أسرع بكثير (بضع ثوان) عند حدوث تغيير في الطوبولوجيا.", "إمكانية استخدام STP لكل VLAN دون الحاجة إلى تكوين خاص.", "دعم التكديس (Stacking) للمحولات لتبسيط الإدارة."], "correct_index": 1, "explanation_ar": "يستخدم RSTP (الذي هو Rapid PVST+) آليات أفضل مثل منافذ الحافة لتقليل زمن التقارب من 50 ثانية في PVST+ إلى بضع ثوان." },
+            { "question_text": "ما هو مقياس التوجيه (Metric) الذي يستخدمه بروتوكول OSPF لتحديد أفضل مسار؟", "domain_ar": "الـ IP Connectivity (الاتصال عبر IP)", "options": ["عدد القفزات (Hop Count).", "عرض النطاق الترددي (Bandwidth) أو الكلفة (Cost).", "المسافة الإدارية (Administrative Distance).", "زمن التأخير (Delay) والموثوقية (Reliability)."], "correct_index": 1, "explanation_ar": "يستخدم بروتوكول OSPF مفهوم 'الكلفة' (Cost)، وهي قيمة تُحسب بناءً على عرض النطاق الترددي (Bandwidth) للرابط. كلما زادت السرعة، قلت الكلفة." },
+            { "question_text": "أي من خدمات IP التالية تسمح للمستخدم بتخصيص نطاق من الـ IP Address لاستخدامها كمصدر لحركة مرور (NAT Overload)؟", "domain_ar": "الـ IP Services (خدمات IP)", "options": ["Static NAT.", "Port Address Translation (PAT).", "Dynamic NAT.", "Policy-Based Routing (PBR)."], "correct_index": 2, "explanation_ar": "يستخدم Dynamic NAT مجموعة من عناوين IP العامة لتعيينها بالتسلسل للمستخدمين الداخليين." },
+            { "question_text": "عندما يقوم مسؤول شبكة بتطبيق قائمة وصول قياسية (Standard ACL) على موجه، ما هي التوصية بخصوص موقع تطبيقها؟", "domain_ar": "أمن الشبكات (Security Fundamentals)", "options": ["أقرب ما يمكن إلى المصدر (Source).", "أقرب ما يمكن إلى الوجهة (Destination).", "فقط على واجهات الإخراج (Outbound Interfaces).", "فقط على واجهات الإدخال (Inbound Interfaces)."], "correct_index": 1, "explanation_ar": "Standard ACLs تُرشح بناءً على المصدر فقط، لذلك توضع أقرب ما يمكن إلى الوجهة لتقليل تأثيرها على حركة المرور." },
+            { "question_text": "في سياق إدارة الأجهزة باستخدام بروتوكول SNMP، ما هو البروتوكول الذي يستخدمه (SNMP Manager) لإرسال رسائل استعلام (Query) إلى (SNMP Agent)؟", "domain_ar": "الـ IP Services (خدمات IP)", "options": ["TCP", "ICMP", "UDP", "RTP"], "correct_index": 2, "explanation_ar": "يستخدم بروتوكول SNMP بروتوكول UDP (User Datagram Protocol) لمنفذ 161 للاستعلامات ومنفذ 162 للـ Traps." },
+            { "question_text": "أي تقنية تمكن مهندس الشبكة من استخدام أوامر Python للتحكم وتكوين أجهزة Cisco، بدلاً من استخدام أوامر CLI التقليدية؟", "domain_ar": "التحكم والأتمتة (Automation and Programmability)", "options": ["SSH with Telnet.", "SNMP Traps.", "RESTCONF API.", "NTP Synchronization."], "correct_index": 2, "explanation_ar": "RESTCONF هو بروتوكول قائم على RESTful يسمح للمطورين والمهندسين باستخدام لغات البرمجة لإدارة وتكوين أجهزة الشبكة." },
+            { "question_text": "عندما يقوم موجه Cisco بإنشاء عنوان IPv6 محلي للرابط (Link-Local Address) تلقائياً، ما هي التقنية التي يستخدمها لتحويل MAC Address الخاص بالواجهة إلى جزء الـ Interface ID لعنوان IPv6؟", "domain_ar": "الـ IP Connectivity (الاتصال عبر IP)", "options": ["SLAAC", "Modified EUI-64", "DHCPv6 Stateful", "Randomization"], "correct_index": 1, "explanation_ar": "تعتبر Modified EUI-64 هي الآلية الافتراضية لتحويل 48 بت من MAC Address إلى 64 بت من الـ Interface ID في IPv6." },
+            { "question_text": "ما هو أول إجراء يجب اتخاذه عند استكشاف أخطاء (Troubleshooting) مشكلة اتصال في الشبكة المحلية (LAN) وفقاً لنموذج OSI؟", "domain_ar": "استكشاف الأخطاء (Troubleshooting)", "options": ["التحقق من جداول التوجيه (Routing Tables).", "اختبار الاتصال باستخدام الأمر (Ping).", "التحقق من حالة الروابط والكابلات (الطبقة الفيزيائية).", "التحقق من عنوان IP وقناع الشبكة (Subnet Mask)."], "correct_index": 2, "explanation_ar": "عند استكشاف الأخطاء باستخدام نموذج OSI، تبدأ دائماً من الطبقة السفلية (الطبقة الفيزيائية 1)." }
+        ];
+        // ==========================================================
+
+        // متغير ثابت يشير إلى نقطة النهاية الآمنة للخادم الوكيل
+        const PROXY_URL = "/api/generate-quiz";
+        const MAX_RETRIES = 3;
+
+        // المتغيرات العالمية للحالة
+        let questions = []; 
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        // العناصر الرئيسية في DOM
+        const loadingState = document.getElementById('loading-state');
+        const loadingSubtitle = document.getElementById('loading-subtitle');
+        const modeMessage = document.getElementById('mode-message');
+        const quizContent = document.getElementById('quiz-content');
+        const resultsScreen = document.getElementById('results-screen');
+        const domainDisplay = document.getElementById('domain-display');
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const explanationText = document.getElementById('explanation-text');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+
+        /**
+         * دالة لجلب الأسئلة الجديدة من الخادم الوكيل الآمن (مع آلية التراجع الأسي)
+         */
+        async function fetchQuestionsFromAPI() {
+            loadingSubtitle.textContent = 'جاري توليد أسئلة احترافية مصنفة بواسطة الذكاء الاصطناعي... (قد يستغرق 5-15 ثانية)';
+            modeMessage.className = 'font-bold text-yellow-600';
+            modeMessage.textContent = 'جارٍ الاتصال بالخادم الوكيل... المفتاح مخفي وآمن.';
+
+            let currentRetry = 0;
+
+            while (currentRetry < MAX_RETRIES) {
+                try {
+                    // الاتصال بالخادم الوكيل الآمن
+                    const response = await fetch(PROXY_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+
+                    if (!response.ok) {
+                        const errorBody = await response.json().catch(() => ({ error: 'Unknown Proxy Error' }));
+                        throw new Error(`Proxy error! status: ${response.status}. Message: ${errorBody.error || 'Unknown error'}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    // الخادم الوكيل يرجع الكائن { questions: [...] }
+                    if (result.questions && Array.isArray(result.questions) && result.questions.length > 0) {
+                        questions = result.questions.map(q => ({
+                            ...q,
+                            userAnswerIndex: null,
+                            isCorrect: null,
+                        }));
+                        
+                        userAnswers = new Array(questions.length).fill(null).map(() => ({
+                            answeredIndex: null,
+                            isCorrect: null
+                        }));
+                        
+                        modeMessage.className = 'font-bold text-green-600';
+                        modeMessage.textContent = '✅ تم تحميل أسئلة جديدة بالذكاء الاصطناعي (الاتصال آمن).';
+                        return true; // نجاح العملية
+                    } else {
+                         throw new Error("الخادم الوكيل لم يرجع بيانات أسئلة صالحة.");
+                    }
+                } catch (error) {
+                    console.error(`Attempt ${currentRetry + 1} failed:`, error);
+                    currentRetry++;
+                    if (currentRetry < MAX_RETRIES) {
+                        const delay = Math.pow(2, currentRetry) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    } else {
+                        // الفشل بعد كل المحاولات - العودة إلى الأسئلة المحلية
+                        console.error('فشل جلب الأسئلة الجديدة بعد عدة محاولات.');
+                        return false; 
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         * دالة لتهيئة الأسئلة (سواء من المحلية أو API)
+         * @param {boolean} useApi - إذا كان صحيحًا، سيحاول جلب أسئلة جديدة عبر API.
+         */
+        async function initializeQuestions(useApi = false) {
+            loadingState.classList.remove('hidden');
+            quizContent.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            
+            currentQuestionIndex = 0;
+            
+            let success = false;
+            if (useApi) {
+                success = await fetchQuestionsFromAPI();
+            }
+
+            if (!success) {
+                // التحميل الفوري من البيانات المحلية
+                questions = initialQuestions.map(q => ({
+                    ...q,
+                    userAnswerIndex: null,
+                    isCorrect: null,
+                }));
+
+                userAnswers = new Array(questions.length).fill(null).map(() => ({
+                    answeredIndex: null,
+                    isCorrect: null
+                }));
+                
+                modeMessage.className = 'font-bold text-red-600';
+                modeMessage.textContent = '⚠️ فشل جلب الأسئلة الجديدة. تم تحميل الأسئلة المدمجة (المحلية).';
+            }
+
+            // عرض الاختبار
+            displayQuestion();
+            loadingState.classList.add('hidden');
+            quizContent.classList.remove('hidden');
+        }
+
+        /**
+         * عرض السؤال الحالي
+         */
+        function displayQuestion() {
+            if (questions.length === 0 || currentQuestionIndex < 0 || currentQuestionIndex >= questions.length) {
+                return;
+            }
+
+            const q = questions[currentQuestionIndex];
+            const answerState = userAnswers[currentQuestionIndex];
+            
+            const questionNumberDisplay = document.querySelector('.quiz-card');
+            if (questionNumberDisplay) {
+                questionNumberDisplay.setAttribute('data-question-index', currentQuestionIndex + 1); 
+            }
+
+            domainDisplay.textContent = q.domain_ar;
+            domainDisplay.className = `inline-block px-5 py-2 text-xl font-extrabold rounded-full text-white shadow-lg ${getDomainColor(q.domain_ar)}`;
+
+            // تحديث نص السؤال
+            questionTextElement.textContent = q.question_text;
+
+            // تحديث الخيارات
+            optionsContainer.innerHTML = '';
+            const optionLetters = ['أ', 'ب', 'ج', 'د'];
+            q.options.forEach((option, index) => {
+                const isSelected = answerState.answeredIndex === index;
+                let classes = 'option-btn w-full p-4 rounded-lg text-gray-800 font-medium transition duration-150';
+
+                if (answerState.answeredIndex !== null) {
+                    if (index === q.correct_index) {
+                        classes += ' selected-correct';
+                    } else if (isSelected && answerState.isCorrect === false) {
+                        classes += ' selected-incorrect';
+                    } else {
+                        classes += ' bg-gray-50 border-gray-200';
+                    }
+                    classes += ' disabled';
+                } else {
+                    classes += ' bg-white hover:border-blue-400';
+                }
+
+                optionsContainer.innerHTML += `
+                    <button class="${classes}" data-index="${index}" ${answerState.answeredIndex !== null ? 'disabled' : ''} onclick="handleAnswerSelection(${index})">
+                        <span class="ml-3 font-mono text-lg font-extrabold">${optionLetters[index]}.</span> ${option}
+                    </button>
+                `;
+            });
+            
+            updateFeedbackArea();
+            updateNavigationButtons();
+        }
+
+        /**
+         * دالة بسيطة لتحديد لون المسار (لتحسين الاحترافية البصرية)
+         */
+        function getDomainColor(domain) {
+            if (domain.includes('أساسيات الشبكات')) return 'bg-indigo-600';
+            if (domain.includes('الوصول للشبكة')) return 'bg-purple-600';
+            if (domain.includes('IP Connectivity')) return 'bg-sky-600';
+            if (domain.includes('IP Services')) return 'bg-yellow-600';
+            if (domain.includes('أمن الشبكات')) return 'bg-red-600';
+            if (domain.includes('الأتمتة')) return 'bg-teal-600';
+            if (domain.includes('استكشاف الأخطاء')) return 'bg-gray-600';
+            return 'bg-blue-500';
+        }
+        
+        /**
+         * حساب النتيجة الإجمالية
+         */
+        function calculateScore() {
+            return userAnswers.filter(a => a.isCorrect === true).length;
+        }
+        
+        /**
+         * معالجة اختيار الإجابة
+         */
+        window.handleAnswerSelection = function(selectedIndex) {
+            if (userAnswers[currentQuestionIndex].answeredIndex !== null) return;
+            
+            const q = questions[currentQuestionIndex];
+            const isCorrect = selectedIndex === q.correct_index;
+            
+            userAnswers[currentQuestionIndex].answeredIndex = selectedIndex;
+            userAnswers[currentQuestionIndex].isCorrect = isCorrect;
+            
+            displayQuestion(); 
+            updateNavigationButtons();
+        }
+
+        /**
+         * تحديث منطقة الشرح والتغذية الراجعة
+         */
+        function updateFeedbackArea() {
+            const q = questions[currentQuestionIndex];
+            const answerState = userAnswers[currentQuestionIndex];
+            
+            if (answerState.answeredIndex !== null) {
+                feedbackArea.classList.remove('hidden');
+                
+                if (answerState.isCorrect) {
+                    feedbackArea.className = 'mt-8 p-4 rounded-xl border-r-4 border-green-500 bg-green-50';
+                    feedbackTitle.className = 'font-extrabold text-lg mb-2 text-green-700';
+                    feedbackTitle.textContent = 'إجابة صحيحة! 🎉';
+                    feedbackIcon.innerHTML = `<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+                } else {
+                    feedbackArea.className = 'mt-8 p-4 rounded-xl border-r-4 border-red-500 bg-red-50';
+                    feedbackTitle.className = 'font-extrabold text-lg mb-2 text-red-700';
+                    feedbackTitle.textContent = 'إجابة خاطئة! ❌';
+                    feedbackIcon.innerHTML = `<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+                }
+
+                explanationText.textContent = q.explanation_ar;
+
+            } else {
+                feedbackArea.classList.add('hidden');
+            }
+        }
+
+        /**
+         * تحديث حالة أزرار التنقل
+         */
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            const isAnswered = userAnswers[currentQuestionIndex].answeredIndex !== null;
+            const isLastQuestion = currentQuestionIndex === questions.length - 1;
+
+            if (isLastQuestion) {
+                nextBtn.innerHTML = `عرض النتيجة <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>`;
+                nextBtn.onclick = showResults;
+            } else {
+                nextBtn.innerHTML = `التالي <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>`;
+                nextBtn.onclick = goToNextQuestion;
+            }
+            nextBtn.disabled = !isAnswered; 
+        }
+
+        /**
+         * الانتقال إلى السؤال التالي
+         */
+        window.goToNextQuestion = function() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else if (currentQuestionIndex === questions.length - 1) {
+                showResults();
+            }
+        }
+
+        /**
+         * الانتقال إلى السؤال السابق
+         */
+        window.goToPreviousQuestion = function() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        /**
+         * عرض شاشة النتائج النهائية
+         */
+        function showResults() {
+            const finalScore = calculateScore();
+            quizContent.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = finalScore;
+
+            let message = '';
+            if (finalScore === questions.length) {
+                message = 'نتيجة خارقة! عشرة من عشرة. مستواك الاحترافي لا يستهان به.';
+            } else if (finalScore >= questions.length * 0.8) {
+                message = 'أداء رائع! أنت قريب جداً من الإتقان. استمر في مراجعة نقاط الضعف القليلة.';
+            } else if (finalScore >= questions.length * 0.6) {
+                message = 'أداء جيد ومقبول. لديك أساس متين، ولكن تحتاج إلى تركيز إضافي على المسارات الصعبة.';
+            } else {
+                message = 'تحتاج إلى مراجعة شاملة لأساسيات CCNA. لا تيأس، العزيمة والممارسة هي طريقك للنجاح.';
+            }
+            document.getElementById('result-message').textContent = message;
+        }
+
+        /**
+         * إعادة بدء الاختبار (يستخدم الأسئلة المحلية أو يجلب الجديدة حسب الطلب)
+         * @param {boolean} fetchNew - لتحديد ما إذا كان يجب جلب أسئلة جديدة عبر API
+         */
+        window.restartQuiz = function(fetchNew = false) {
+            initializeQuestions(fetchNew);
+        }
+
+        // بدء التطبيق بالأسئلة المحلية لضمان التحميل الفوري
+        initializeQuestions(false);
+    </script>
+</body>
+</html>
+
