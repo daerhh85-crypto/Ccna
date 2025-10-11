@@ -1,41 +1,104 @@
-// api/test_gemini.js
+// generate-quiz.js
+
 import fetch from 'node-fetch';
 
+// ******************************************************************
+// ** تحذير أمني: المفتاح المضمن في الكود معرض للخطر.                **
+// ** هذا للاختبار المؤقت فقط. استبدله بـ process.env.GEMINI_API_KEY **
+// ** قبل النشر لأسباب أمنية.                                     **
+// ******************************************************************
+const API_KEY = "AIzaSyChw8BU7NYTg0GzQH-0b3RG15v63MtGpL4"; // <--- مفتاحك المضمن هنا
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+
+// تعليمات مفصلة لنموذج Gemini لضمان الحصول على تنسيق JSON الصحيح لأسئلة CCNA
+const PROMPT = `
+    أنت خبير في شهادة CCNA 200-301. قم بإنشاء 10 أسئلة احترافية متعددة الخيارات (4 خيارات، إجابة واحدة صحيحة) تغطي مسارات CCNA الأساسية (مثل IP Connectivity, Network Access, Security, Automation). يجب أن تكون الأسئلة متقدمة ومناسبة لمستوى الشهادة.
+
+    **الـ System Instruction المطلوب:**
+
+    1.  يجب أن تكون الإجابة بصيغة JSON فقط، بدون أي نص تمهيدي أو ختامي، لتسهيل التحليل.
+    2.  يجب أن يكون الكائن الرئيسي هو مصفوفة JSON تحتوي على 10 عناصر بالضبط.
+    3.  كل عنصر في المصفوفة يجب أن يكون له الحقول التالية باللغة العربية:
+        * **question_text**: نص السؤال.
+        * **domain_ar**: مجال السؤال (مثل 'الوصول للشبكة', 'أمن الشبكات', 'الأتمتة والبرمجة').
+        * **options**: مصفوفة من 4 خيارات.
+        * **correct_index**: رقم فهرس الإجابة الصحيحة (0, 1, 2, أو 3).
+        * **explanation_ar**: شرح موجز ومهني للإجابة الصحيحة.
+`;
+
+
 export default async function handler(req, res) {
-  // **********************************************
-  // ** تنبيه: هذا تعيين مؤقت لمفتاح API لأغراض الاختبار. **
-  // ** يجب إزالته أو تغييره لاستخدام process.env.GEMINI_API_KEY **
-  // ** قبل النشر لأسباب أمنية.                             **
-  // **********************************************
-  const API_KEY = "AIzaSyChw8BU7NYTg0GzQH-0b3RG15v63MtGpL4"; // <--- تم التعديل هنا
-
-  if (!API_KEY) {
-    return res.status(500).json({ error: 'GEMINI_API_KEY is not set.' });
-  }
-
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
-
-  const payload = {
-    contents: [{ parts: [{ text: "اكتب سؤال واحد تجريبي بسيط لاختبار النموذج." }] }],
-    systemInstruction: { parts: [{ text: "أجب بصيغة JSON بسيطة: { \"test\": \"ok\" }" }] },
-    generationConfig: {
-      responseMimeType: "application/json"
+    // التحقق من المفتاح (حتى لو كان مضمناً، للتحقق من وجوده)
+    if (!API_KEY) {
+        return res.status(500).json({ error: 'API_KEY is not configured.' });
     }
-  };
 
-  try {
-    const apiResp = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      // timeout handling optional
-    });
+    const payload = {
+        // تحديد دور المستخدم وإرسال التوجيهات
+        contents: [{ role: "user", parts: [{ text: PROMPT }] }],
+        generationConfig: {
+            // إجبار النموذج على إرجاع JSON
+            responseMimeType: "application/json", 
+            temperature: 0.7, // لزيادة الإبداع في الأسئلة
+            maxOutputTokens: 4096 // زيادة الحد الأقصى للتوكنز لاستيعاب 10 أسئلة
+        },
+        // منع أي محتوى غير آمن بالكامل
+        safetySettings: [
+             {
+                category: "HARM_CATEGORY_HARASSMENT",
+                threshold: "BLOCK_MEDIUM_AND_ABOVE",
+            },
+        ],
+    };
 
-    const text = await apiResp.text();
-    // رجّع النص الخام من Gemini عشان نشوف هل في استجابة
-    return res.status(apiResp.status).send({ ok: apiResp.ok, raw: text });
-  } catch (err) {
-    console.error('Proxy error:', err);
-    return res.status(500).json({ error: 'Internal proxy error', details: err.message });
-  }
+    try {
+        const apiResp = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+
+        const text = await apiResp.text();
+
+        if (!apiResp.ok) {
+            // معالجة أخطاء API (مثل خطأ في المفتاح أو نفاد الحصة)
+            let errorDetails = { message: text };
+            try {
+                errorDetails = JSON.parse(text);
+            } catch (e) { /* تجاهل أخطاء تحليل JSON */ }
+            return res.status(apiResp.status).json({ error: 'Gemini API Error', details: errorDetails });
+        }
+        
+        // تحليل الرد JSON من Gemini
+        let geminiResponse;
+        try {
+            geminiResponse = JSON.parse(text);
+        } catch (e) {
+            return res.status(500).json({ error: 'Invalid JSON response from Gemini (Outer)', raw: text });
+        }
+        
+        // استخراج النص الفعلي الذي يحتوي على مصفوفة الأسئلة
+        const generatedText = geminiResponse.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!generatedText) {
+            return res.status(500).json({ error: 'No text generated by Gemini', raw: geminiResponse });
+        }
+
+        // محاولة تحليل مصفوفة الأسئلة نفسها
+        let quizQuestions;
+        try {
+            // إزالة أي توكنات مارك داون (مثل "```json" و "```") قد يضيفها النموذج أحياناً
+            const cleanText = generatedText.replace(/```json|```/g, '').trim();
+            quizQuestions = JSON.parse(cleanText);
+        } catch (e) {
+             return res.status(500).json({ error: 'Failed to parse quiz array from AI output (Inner)', raw: generatedText });
+        }
+
+        // إرجاع مصفوفة الأسئلة إلى المتصفح
+        return res.status(200).json({ questions: quizQuestions });
+
+    } catch (err) {
+        console.error('Proxy error:', err);
+        return res.status(500).json({ error: 'Internal server error', details: err.message });
+    }
 }
