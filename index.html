@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CCNA 200-301 محاكي الاختبار الاحترافي</title>
-    <!-- تحميل Tailwind CSS -->
+    <title>CCNA 200-301 محاكي الاختبار الاحترافي بالذكاء الاصطناعي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- إعداد خط Tajawal لخط عربي احترافي وناعم -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap');
         body {
@@ -27,8 +25,8 @@
         /* خط احترافي لنص السؤال - تم تصغير حجم الخط وتخفيف وزنه */
         #question-text {
             font-family: 'Tajawal', sans-serif;
-            font-weight: 600; /* وزن أقل من السابق */
-            font-size: 1.875rem; /* text-3xl بدلاً من text-4xl */
+            font-weight: 700; /* وزن مناسب للسؤال */
+            font-size: 1.875rem; /* text-3xl */
         }
 
         /* تأثير 3D على أزرار الخيارات */
@@ -81,54 +79,43 @@
 <body>
 
     <div class="max-w-2xl w-full mx-auto">
-        <!-- العنوان الرئيسي -->
         <header class="text-center mb-6">
             <h1 class="text-3xl font-extrabold text-gray-800 tracking-wide p-2 bg-indigo-100 rounded-xl shadow-md border-b-2 border-indigo-400">
                 CCNA 200-301 v.1.1 محاكي اختبار آمن
             </h1>
         </header>
 
-        <!-- منطقة العرض الرئيسية (الطبقة الواحدة) -->
         <main id="quiz-container" class="quiz-card bg-white p-6 md:p-8 rounded-xl border border-gray-200">
 
-            <!-- مؤشر التحميل/الرسالة الأولية -->
             <div id="loading-state" class="text-center py-20">
                 <div class="spinner border-4 border-gray-200 border-solid rounded-full h-12 w-12 mx-auto mb-4"></div>
                 <p class="text-lg text-indigo-600 font-semibold">جاري تحميل الأسئلة. سيظهر الاختبار فوراً.</p>
                 <p id="loading-subtitle" class="text-sm text-gray-500 mt-2">
-                    <span id="mode-message" class="font-bold text-yellow-600">جارٍ محاولة الاتصال بالخادم الوكيل الآمن...</span>
+                    <span id="mode-message" class="font-bold text-yellow-600">جارٍ محاولة الاتصال بالخادم الوكيل الآمن لتوليد أسئلة جديدة...</span>
                 </p>
             </div>
 
-            <!-- محتوى الاختبار (يظهر بعد التحميل) -->
             <div id="quiz-content" class="hidden">
                 
-                <!-- منطقة بيانات المسار -->
                 <div class="mb-10 pb-4 border-b border-gray-100 text-center">
                     <span id="domain-display" class="inline-block px-5 py-2 text-xl font-extrabold rounded-full text-white shadow-lg">
                         [مسار السؤال]
                     </span>
                 </div>
 
-                <!-- نص السؤال (تم إزالة رقم السؤال وتخفيف الخط) -->
                 <div class="mb-10 text-center">
                     <p id="question-text" class="text-3xl font-semibold text-gray-800 leading-snug max-w-xl mx-auto">
                         [نص السؤال يظهر هنا]
                     </p>
                 </div>
 
-                <!-- خيارات الإجابة -->
                 <div id="options-container" class="space-y-4">
-                    <!-- خيارات الإجابة يتم إدراجها هنا بواسطة JavaScript -->
-                </div>
+                    </div>
 
-                <!-- منطقة الشرح والإجابة الصحيحة/الخاطئة -->
                 <div id="feedback-area" class="mt-8 p-4 rounded-xl border-r-4 hidden">
                     <div class="flex items-start">
-                        <!-- أيقونة الشرح -->
                         <div id="feedback-icon" class="flex-shrink-0 ml-3 h-8 w-8 rounded-full flex items-center justify-center">
-                            <!-- الأيقونة تظهر هنا -->
-                        </div>
+                            </div>
                         <div class="flex-grow">
                             <h3 id="feedback-title" class="font-extrabold text-lg mb-2"></h3>
                             <p id="explanation-text" class="text-md text-gray-700 leading-relaxed"></p>
@@ -136,29 +123,25 @@
                     </div>
                 </div>
 
-                <!-- أزرار السابق/التالي -->
                 <div class="flex justify-between mt-8 pt-6 border-t border-gray-100">
                     <button id="prev-btn" onclick="goToPreviousQuestion()" disabled
                         class="flex items-center px-5 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 disabled:opacity-50 transition duration-150 shadow-md hover:shadow-lg">
-                        <!-- أيقونة سابقة (سهم يمين) -->
                         <svg class="w-5 h-5 ml-2 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         السابق
                     </button>
                     <button id="next-btn" onclick="goToNextQuestion()" disabled
                         class="flex items-center px-5 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition duration-150 shadow-md hover:shadow-lg">
                         التالي
-                        <!-- أيقونة التالي (سهم يسار) -->
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </div>
             </div>
 
-            <!-- شاشة النتائج النهائية -->
             <div id="results-screen" class="hidden text-center py-12">
                 <h2 class="text-4xl font-extrabold text-indigo-700 mb-6">✅ نتائج اختبار CCNA</h2>
                 <div class="mb-8 p-6 bg-green-50 rounded-xl inline-block border-2 border-green-300 shadow-lg">
                     <p class="text-3xl font-extrabold text-gray-800">
-                        النتيجة النهائية: <span id="final-score" class="text-green-600"></span> / 10
+                        النتيجة النهائية: <span id="final-score" class="text-green-600"></span> / <span id="total-questions"></span>
                     </p>
                 </div>
                 <p id="result-message" class="text-xl text-gray-700 mb-10 leading-relaxed"></p>
@@ -193,7 +176,7 @@
 
         // متغير ثابت يشير إلى نقطة النهاية الآمنة للخادم الوكيل
         const PROXY_URL = "/api/generate-quiz";
-        const MAX_RETRIES = 3;
+        const MAX_RETRIES = 2; // تقليل المحاولات لتسريع الفشل والعودة للمحلي
 
         // المتغيرات العالمية للحالة
         let questions = []; 
@@ -206,6 +189,7 @@
         const modeMessage = document.getElementById('mode-message');
         const quizContent = document.getElementById('quiz-content');
         const resultsScreen = document.getElementById('results-screen');
+        const totalQuestionsDisplay = document.getElementById('total-questions');
         const domainDisplay = document.getElementById('domain-display');
         const questionTextElement = document.getElementById('question-text');
         const optionsContainer = document.getElementById('options-container');
@@ -229,7 +213,7 @@
 
             while (currentRetry < MAX_RETRIES) {
                 try {
-                    // الاتصال بالخادم الوكيل الآمن
+                    // الاتصال بالخادم الوكيل الآمن (الذي سيستخدم المفتاح المضمن في ملف generate-quiz.js)
                     const response = await fetch(PROXY_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -265,6 +249,7 @@
                     console.error(`Attempt ${currentRetry + 1} failed:`, error);
                     currentRetry++;
                     if (currentRetry < MAX_RETRIES) {
+                        // الانتظار ثم المحاولة مرة أخرى (Exponential Backoff)
                         const delay = Math.pow(2, currentRetry) * 1000;
                         await new Promise(resolve => setTimeout(resolve, delay));
                     } else {
@@ -309,6 +294,9 @@
                 modeMessage.className = 'font-bold text-red-600';
                 modeMessage.textContent = '⚠️ فشل جلب الأسئلة الجديدة. تم تحميل الأسئلة المدمجة (المحلية).';
             }
+            
+            // تحديث عدد الأسئلة الإجمالي
+            totalQuestionsDisplay.textContent = questions.length;
 
             // عرض الاختبار
             displayQuestion();
@@ -336,8 +324,8 @@
             domainDisplay.className = `inline-block px-5 py-2 text-xl font-extrabold rounded-full text-white shadow-lg ${getDomainColor(q.domain_ar)}`;
 
             // تحديث نص السؤال
-            questionTextElement.textContent = q.question_text;
-
+            questionTextElement.textContent = `(${currentQuestionIndex + 1}/${questions.length}) ${q.question_text}`; // إضافة رقم السؤال
+            
             // تحديث الخيارات
             optionsContainer.innerHTML = '';
             const optionLetters = ['أ', 'ب', 'ج', 'د'];
@@ -375,10 +363,10 @@
         function getDomainColor(domain) {
             if (domain.includes('أساسيات الشبكات')) return 'bg-indigo-600';
             if (domain.includes('الوصول للشبكة')) return 'bg-purple-600';
-            if (domain.includes('IP Connectivity')) return 'bg-sky-600';
-            if (domain.includes('IP Services')) return 'bg-yellow-600';
+            if (domain.includes('IP Connectivity') || domain.includes('الاتصال عبر IP')) return 'bg-sky-600';
+            if (domain.includes('IP Services') || domain.includes('خدمات IP')) return 'bg-yellow-600';
             if (domain.includes('أمن الشبكات')) return 'bg-red-600';
-            if (domain.includes('الأتمتة')) return 'bg-teal-600';
+            if (domain.includes('الأتمتة') || domain.includes('Automation')) return 'bg-teal-600';
             if (domain.includes('استكشاف الأخطاء')) return 'bg-gray-600';
             return 'bg-blue-500';
         }
@@ -485,16 +473,18 @@
             resultsScreen.classList.remove('hidden');
 
             document.getElementById('final-score').textContent = finalScore;
+            document.getElementById('total-questions').textContent = questions.length;
 
             let message = '';
-            if (finalScore === questions.length) {
-                message = 'نتيجة خارقة! عشرة من عشرة. مستواك الاحترافي لا يستهان به.';
-            } else if (finalScore >= questions.length * 0.8) {
-                message = 'أداء رائع! أنت قريب جداً من الإتقان. استمر في مراجعة نقاط الضعف القليلة.';
-            } else if (finalScore >= questions.length * 0.6) {
-                message = 'أداء جيد ومقبول. لديك أساس متين، ولكن تحتاج إلى تركيز إضافي على المسارات الصعبة.';
+            const percentage = (finalScore / questions.length) * 100;
+            if (percentage === 100) {
+                message = 'نتيجة خارقة! مستوى إتقانك الاحترافي لـ CCNA لا يستهان به. 🥇';
+            } else if (percentage >= 80) {
+                message = 'أداء رائع! أنت قريب جداً من الإتقان. استمر في مراجعة نقاط الضعف القليلة. 🌟';
+            } else if (percentage >= 60) {
+                message = 'أداء جيد ومقبول. لديك أساس متين، ولكن تحتاج إلى تركيز إضافي على المسارات الصعبة. 💪';
             } else {
-                message = 'تحتاج إلى مراجعة شاملة لأساسيات CCNA. لا تيأس، العزيمة والممارسة هي طريقك للنجاح.';
+                message = 'تحتاج إلى مراجعة شاملة لأساسيات CCNA. لا تيأس، العزيمة والممارسة هي طريقك للنجاح. 📚';
             }
             document.getElementById('result-message').textContent = message;
         }
@@ -507,9 +497,8 @@
             initializeQuestions(fetchNew);
         }
 
-        // بدء التطبيق بالأسئلة المحلية لضمان التحميل الفوري
-        initializeQuestions(false);
+        // 💡 التعديل هنا: بدء التطبيق بمحاولة جلب الأسئلة من الذكاء الاصطناعي مباشرة (initializeQuestions(true))
+        initializeQuestions(true); 
     </script>
 </body>
 </html>
-
